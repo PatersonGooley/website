@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space-Themed Tic Tac Toe</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #000428, #004e92);
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff;
+            margin-bottom: 20px;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            justify-content: center;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #00d4ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .cell:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .cell.taken {
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #ecf0f1;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+
+        #winner {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background: #00d4ff;
+            border: none;
+            color: black;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #00d4ff;
+        }
+
+        button:hover {
+            background: #00a3cc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Space-Themed Tic Tac Toe</h1>
+    <div id="board"></div>
+    <div id="winner"></div>
+    <button onclick="resetGame()">Restart Game</button>
+
+    <script>
+        const board = document.getElementById('board');
+        const winnerText = document.getElementById('winner');
+
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let isGameOver = false;
+
+        const winningCombinations = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        function createBoard() {
+            board.innerHTML = '';
+            gameBoard.forEach((cell, index) => {
+                const cellDiv = document.createElement('div');
+                cellDiv.classList.add('cell');
+                cellDiv.dataset.index = index;
+                cellDiv.innerText = cell;
+                cellDiv.addEventListener('click', handleCellClick);
+                board.appendChild(cellDiv);
+            });
+        }
+
+        function handleCellClick(event) {
+            const index = event.target.dataset.index;
+            if (gameBoard[index] !== '' || isGameOver) return;
+
+            gameBoard[index] = currentPlayer;
+            event.target.innerText = currentPlayer;
+            event.target.classList.add('taken');
+
+            if (checkWinner()) {
+                winnerText.innerText = `${currentPlayer} Wins!`;
+                isGameOver = true;
+                return;
+            }
+
+            if (gameBoard.every(cell => cell !== '')) {
+                winnerText.innerText = "It's a Tie!";
+                isGameOver = true;
+                return;
+            }
+
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+
+        function checkWinner() {
+            return winningCombinations.some(combination => {
+                return combination.every(index => gameBoard[index] === currentPlayer);
+            });
+        }
+
+        function resetGame() {
+            currentPlayer = 'X';
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            isGameOver = false;
+            winnerText.innerText = '';
+            createBoard();
+        }
+
+        createBoard();
+    </script>
+
+    <a href="AI_Experiment_1.html" class="back-button">Go Back</a>
+    
+</body>
+</html>
